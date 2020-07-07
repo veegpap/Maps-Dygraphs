@@ -9,16 +9,12 @@ server <- function(input, output, session) {
   
   load("pandata_dekaeties.RData")
   load("countries22.RData")
-  #load("pandata_for.RData")
-  
-  
+    
   lut <- data.frame(iso2 = c("DK","FI","FR","IS","IT","NLD","NO","SE","CH","AT","BE","CZ","IE","EE","LV","LT","DE","GR","PL","PT","ES","UK"),
                     name = c("Denmark", "Finland", "France", "Island", "Italy","Netherlands", "Norway", "Sweden", "Switzerland",
                              "Austria","Belgium", "Czechia", "Ireland","Estonia","Latvia","Lithuania","Germany", "Greece","Poland",
                              "Portugal","Spain","United Kingdom"))
-  
-  
-  ksi_doat <- reactive({
+ ksi_doat <- reactive({
     mika <- lut$iso2[match(input$country, lut$name)]
     nb <- which(males_dat[[1]][,1] == mika)
     country_ksi_dat <- data.frame(year = c(1960,1970,1980,1990,2000,2010,2015,2020,2025,2030,2035,2040,2044,2045), 
@@ -27,17 +23,8 @@ server <- function(input, output, session) {
                          mean_male = as.vector(t(males_stat[[1]][1,-1])),
                          mean_female = as.vector(t(females_stat[[1]][1,-1])))
     
-#    a1 <- data.frame(year = 2014:2045, male = as.vector(t(males_for_dat[[1]][nb,-c(1,2)])),
-#                     female = as.vector(t(females_for_dat[[1]][nb,-c(1,2)])),
-#                     mean_male = as.vector(t(males_for_stat[[1]][1,-c(1,2)])),
-#                     mean_female = as.vector(t(females_for_stat[[1]][1,-c(1,2)]))
-#                     )
-#    
-#    
-#    rbind(country_ksi_dat, a1)
     country_ksi_dat
   })
-  
   
   output$ksi_graf <- renderDygraph({
     cc <- ksi_doat()
@@ -56,9 +43,7 @@ server <- function(input, output, session) {
       dyEvent("2013", "Forecast", labelLoc = "bottom")
     
   })
-  
-  
-  
+    
   kapa_doat <- reactive({
     mikav <- lut$iso2[match(input$country, lut$name)]
     nv <- which(males_dat[[1]][,1] == mikav)
@@ -67,19 +52,9 @@ server <- function(input, output, session) {
                               female =  as.vector(t(females_dat[[2]][nv,-1])),
                               mean_male = as.vector(t(males_stat[[2]][1,-1])),
                               mean_female = as.vector(t(females_stat[[2]][1,-1])))
-    
-#    a2 <- data.frame(year = 2014:2045, male = as.vector(t(males_for_dat[[2]][nv,-c(1,2)])),
-#                     female = as.vector(t(females_for_dat[[2]][nv,-c(1,2)])),
-#                     mean_male = as.vector(t(males_for_stat[[2]][1,-c(1,2)])),
-#                     mean_female = as.vector(t(females_for_stat[[2]][1,-c(1,2)]))
-#    )
-#    
-#    rbind(country_kapa_dat,a2)
-    country_kapa_dat
-    
-  })
-  
-  
+ country_kapa_dat
+ })
+   
   output$kapa_graf <- renderDygraph({
     ck <- kapa_doat()
     
@@ -108,15 +83,7 @@ server <- function(input, output, session) {
                                    mean_male = as.vector(t(males_stat[[3]][1,-1])),
                                    mean_female = as.vector(t(females_stat[[3]][1,-1])))
     
-#    a3 <- data.frame(year = 2014:2045, male = as.vector(t(males_for_dat[[3]][nx,-c(1,2)])),
-#                     female = as.vector(t(females_for_dat[[3]][nx,-c(1,2)])),
-#                     mean_male = as.vector(t(males_for_stat[[3]][1,-c(1,2)])),
-#                     mean_female = as.vector(t(females_for_stat[[3]][1,-c(1,2)]))
-#    )
-#    
-#    rbind(country_lamda_dat,a3)
-    
-    country_lamda_dat
+  country_lamda_dat
   })
   
   
@@ -138,8 +105,6 @@ server <- function(input, output, session) {
     
   })
   
-  
-  
   theta_doat <- reactive({
     mikae <- lut$iso2[match(input$country, lut$name)]
     ne <- which(males_dat[[1]][,1] == mikae)
@@ -149,14 +114,7 @@ server <- function(input, output, session) {
                                     mean_male = as.vector(t(males_stat[[4]][1,-1])),
                                     mean_female = as.vector(t(females_stat[[4]][1,-1])))
     
-#    a4 <- data.frame(year = 2014:2045, male = as.vector(t(males_for_dat[[4]][ne,-c(1,2)])),
-#                     female = as.vector(t(females_for_dat[[4]][ne,-c(1,2)])),
-#                     mean_male = as.vector(t(males_for_stat[[4]][1,-c(1,2)])),
-#                     mean_female = as.vector(t(females_for_stat[[4]][1,-c(1,2)]))
-#    )
-#    
-#    rbind(country_theta_dat, a4)
-    country_theta_dat    
+ country_theta_dat    
   })
   
   
@@ -178,13 +136,9 @@ server <- function(input, output, session) {
     
   })
   
-  
-  #--------Maps------------------------------
-  bi <- c(100000, 100000, 6000000, 7000000)
+ bi <- c(100000, 100000, 6000000, 7000000)
   names(bi) <- c("xmin","ymin","xmax","ymax")
-  
   tmap_mode("view")
-  
   output$malemap <- renderLeaflet({
     ioc <- paramos()
     #maldate <- cbind(males_dat[[ioc]], males_for_dat[[ioc]][-c(1,2)])
@@ -200,18 +154,14 @@ server <- function(input, output, session) {
       tm_fill(col = paste0("X", input$time), style = "fixed", palette = "YlOrBr", breaks = brikm, labels = c("below", "above"), showNA = T, title = paste0(input$time, " (mean)")) +
         tm_borders(lwd = 0.5)
     }
-     # tm_scale_bar(position = c("left", "bottom"))
-  tmap_leaflet(tmm) %>% setView(15,60,3)
+   tmap_leaflet(tmm) %>% setView(15,60,3)
     
   })
   
   output$femalemap <- renderLeaflet({
     ioc2 <- paramos()
-    #femaldate <- cbind(females_dat[[ioc2]], females_for_dat[[ioc2]][-c(1,2)])
     femaldate <- females_dat[[ioc2]]
     femal_df <- merge(pan_22_sf, femaldate, by.x = "pancode", by.y = colnames(femaldate)[1])
-    
-    #midpoint = mean(femaldate[,paste0("X",input$time)], na.rm = T)
     if(input$mode == "palette") {   
   tmf <-  tm_shape(femal_df, bbox = bi) +
       tm_fill(col = paste0("X", input$time), palette = "YlOrBr", style = "jenks", showNA = T) +
@@ -225,11 +175,7 @@ server <- function(input, output, session) {
   tmap_leaflet(tmf) %>% setView(15,60,3)
      
   })
-  
-  
-  #----------histograms--------------------------
-  
-  
+
   paramos <- reactive({
     switch(input$paramo,
                "ksi" = 1,
@@ -241,7 +187,6 @@ server <- function(input, output, session) {
   output$malehist <- renderPlot({
     indi <- paramos()
     tm <- paste0("X", input$time)
-    #maldates <- cbind(males_dat[[indi]], males_for_dat[[indi]][-c(1,2)])
     maldates <- males_dat[[indi]]
     
     hist(maldates[,tm], prob = T, n = 10, col="lightblue", main=NULL, ylab = NULL, xlab = tm, yaxt="n")
@@ -253,8 +198,7 @@ server <- function(input, output, session) {
   output$femalehist <- renderPlot({
     indi2 <- paramos()
     tm2 <- paste0("X", input$time)
-    #femaldates <- cbind(females_dat[[indi2]], females_for_dat[[indi2]][-c(1,2)])
-    femaldates <- females_dat[[indi2]]
+   femaldates <- females_dat[[indi2]]
     
     hist(femaldates[,tm2], prob = T, n = 10, col="lightblue", main=NULL, ylab = NULL, xlab = tm2, yaxt="n")
     lines(density(femaldates[,tm2],  na.rm = T), col="red", lwd=2) 
@@ -262,47 +206,5 @@ server <- function(input, output, session) {
     
   })
   
-  
-  
-  #----------Tables--------------------------  
-  
-#  statmal <- reactive({
-#    
-#    indi <- paramos()
-#    tm <- paste0("X", input$time)
-#    #tb1 <- males_stat[[indi]][tm]
-#    DF1 <- data.frame(stat = males_stat[[indi]][1], value = males_stat[[indi]][tm])
-#    
-#  })
-##  
-#  output$malestat <-  renderTable({
-#    statmal()
-#  },  
-#  striped = TRUE, bordered = TRUE,  
-#  hover = TRUE, spacing = 'xs',  
-#  digits = 6
-#  )
-#  
-#  
-##  statfemal <- reactive({
-#    
-#    indi2 <- paramos()
-##    tm2 <- paste0("X", input$time)
-#    #tb1 <- males_stat[[indi]][tm]
-#    DF1 <- data.frame(stat = females_stat[[indi2]][1], value = males_stat[[indi2]][tm2])
-#    
-#  })
-#  
-#  output$femalestat <-  renderTable({
-#    statfemal()
-#  },  
-##  striped = TRUE, bordered = TRUE,  
-#  hover = TRUE, spacing = 'xs',  
-#  digits = 6
-#  )
-  
-  
-  
-  
-  
+   
 }
